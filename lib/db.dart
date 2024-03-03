@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class Expense {
   final String title;
   final int amount;
-  final String date;
+  final DateTime date;
 
   Expense(this.title, this.amount, this.date);
 
@@ -14,7 +13,7 @@ class Expense {
     return {
       'title': title,
       'amount': amount,
-      'date': date,
+      'date': date.toIso8601String(),
     };
   }
 }
@@ -37,7 +36,7 @@ class DatabaseHelper {
       join(path, 'expenses.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE expenses(id INTEGER PRIMARY KEY, title TEXT, amount INTEGER, date TEXT)',
+          'CREATE TABLE expenses(id INTEGER PRIMARY KEY, title TEXT, amount INTEGER, date DATETIME)',
         );
       },
       version: 1,
@@ -55,13 +54,29 @@ class DatabaseHelper {
 
   Future<List<Expense>> getExpenses() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('expenses');
-    return List.generate(maps.length, (i) {
-      return Expense(
-        maps[i]['title'],
-        maps[i]['amount'],
-        maps[i]['date'],
-      );
+    final List<Map<String, dynamic>> allMaps = await db.query('expenses');
+    DateTime now = DateTime.now();
+    int currentMonth = now.month;
+    int currentYear = now.year;
+    List<Map<String, dynamic>> filteredMaps = allMaps.where((expense) {
+      DateTime expenseDate = DateTime.parse(expense['date']);
+      return expenseDate.month == currentMonth &&
+          expenseDate.year == currentYear;
+    }).toList();
+    filteredMaps.sort((a, b) {
+      DateTime dateA = DateTime.parse(a['date']);
+      DateTime dateB = DateTime.parse(b['date']);
+      return dateB.compareTo(dateA); // Compare in descending order
     });
+    List<Expense> expenses = [];
+    for (var map in filteredMaps) {
+      Expense expense = Expense(
+        map['title'],
+        map['amount'],
+        DateTime.parse(map['date']),
+      );
+      expenses.add(expense);
+    }
+    return expenses;
   }
 }

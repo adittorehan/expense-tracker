@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'db.dart';
 
 void main() {
@@ -137,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       TableCell(
                         child:
-                        Center(child: Text('Date', style: headerTextStyle)),
+                            Center(child: Text('Date', style: headerTextStyle)),
                       ),
                     ],
                   ),
@@ -151,7 +152,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Center(child: Text('${expense.amount}')),
                         ),
                         TableCell(
-                          child: Center(child: Text(expense.date)),
+                          child: Center(
+                              child: Text(DateFormat('EEEE, d MMM')
+                                  .format(expense.date))),
                         ),
                       ],
                     ),
@@ -229,8 +232,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
               if (_formKey.currentState!.validate()) {
                 String title = _titleController.text;
                 int amount = int.parse(_amountController.text);
-                String date = DateTime.now().toString();
-                await _databaseHelper.insertExpense(Expense(title, amount, date));
+                DateTime date = DateTime.now(); // Use DateTime.now() directly
+                await _databaseHelper
+                    .insertExpense(Expense(title, amount, date));
                 _titleController.clear();
                 _amountController.clear();
                 widget.onExpenseAdded!();
@@ -244,4 +248,3 @@ class _ExpenseFormState extends State<ExpenseForm> {
     );
   }
 }
-
