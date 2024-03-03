@@ -3,11 +3,14 @@ import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class Expense {
+  int? id;
   final String title;
   final int amount;
   final DateTime date;
 
   Expense(this.title, this.amount, this.date);
+
+  Expense.row(this.id, this.title, this.amount, this.date);
 
   Map<String, dynamic> toMap() {
     return {
@@ -70,7 +73,8 @@ class DatabaseHelper {
     });
     List<Expense> expenses = [];
     for (var map in filteredMaps) {
-      Expense expense = Expense(
+      Expense expense = Expense.row(
+        map['id'],
         map['title'],
         map['amount'],
         DateTime.parse(map['date']),
@@ -78,5 +82,14 @@ class DatabaseHelper {
       expenses.add(expense);
     }
     return expenses;
+  }
+
+  Future<void> deleteExpenseById(int id) async {
+    final db = await database;
+    await db.delete(
+      'expenses',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

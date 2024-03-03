@@ -85,6 +85,36 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _deleteExpenseConfirmation(int? id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text('Are you sure you want to delete this expense?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context), // Cancel deletion
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close confirmation dialog
+                _deleteExpense(id!); // Proceed with deletion
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteExpense(int id) async {
+    await DatabaseHelper.instance.deleteExpenseById(id);
+    _fetchExpenses(); // Refresh expenses after deletion
+  }
+
   @override
   Widget build(BuildContext context) {
     const headerTextStyle = TextStyle(fontWeight: FontWeight.bold);
@@ -146,15 +176,32 @@ class _MyHomePageState extends State<MyHomePage> {
                     TableRow(
                       children: [
                         TableCell(
-                          child: Center(child: Text(expense.title)),
+                          child: InkWell(
+                            onTap: () {
+                              _deleteExpenseConfirmation(expense
+                                  .id); // Show delete confirmation dialog
+                            },
+                            child: Center(child: Text(expense.title)),
+                          ),
                         ),
                         TableCell(
-                          child: Center(child: Text('${expense.amount}')),
+                          child: InkWell(
+                            onTap: () {
+                              _deleteExpenseConfirmation(expense
+                                  .id); // Show delete confirmation dialog
+                            },
+                            child: Center(child: Text('${expense.amount}')),
+                          ),
                         ),
                         TableCell(
-                          child: Center(
-                              child: Text(DateFormat('EEEE, d MMM')
-                                  .format(expense.date))),
+                          child: InkWell(
+                            onTap: () {
+                              _deleteExpenseConfirmation(expense.id); // Show delete confirmation dialog
+                            },
+                            child: Center(
+                                child: Text(DateFormat('EEEE, d MMM')
+                                    .format(expense.date))),
+                          ),
                         ),
                       ],
                     ),
