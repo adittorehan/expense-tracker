@@ -6,7 +6,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -40,9 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void _fetchExpenses() async {
     List<Expense> expenses = await DatabaseHelper.instance.getExpenses();
     int total = 0;
-    expenses.forEach((expense) {
+    for (var expense in expenses) {
       total += expense.amount;
-    });
+    }
     setState(() {
       _expenses = expenses;
       _totalExpendedAmount = total;
@@ -59,18 +59,18 @@ class _MyHomePageState extends State<MyHomePage> {
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                const Text(
                   'Add Expense',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ExpenseForm(
                   onExpenseAdded: () {
                     _fetchExpenses();
@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Text(
                       'Total Expense: $_totalExpendedAmount',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 22,
                       ),
@@ -119,13 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 8, right: 8),
+            padding: const EdgeInsets.only(left: 8, right: 8),
             child: Padding(
-              padding: EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.only(top: 16),
               child: Table(
                 border: TableBorder.all(),
                 children: [
-                  TableRow(
+                  const TableRow(
                     children: [
                       TableCell(
                         child: Center(
@@ -173,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
 class ExpenseForm extends StatefulWidget {
   final Function? onExpenseAdded;
 
-  const ExpenseForm({Key? key, this.onExpenseAdded}) : super(key: key);
+  const ExpenseForm({super.key, this.onExpenseAdded});
 
   @override
   _ExpenseFormState createState() => _ExpenseFormState();
@@ -201,7 +201,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
         children: [
           TextFormField(
             controller: _titleController,
-            decoration: InputDecoration(labelText: 'Title'),
+            decoration: const InputDecoration(labelText: 'Title'),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter a title';
@@ -209,10 +209,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
               return null;
             },
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _amountController,
-            decoration: InputDecoration(labelText: 'Amount'),
+            decoration: const InputDecoration(labelText: 'Amount'),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter an amount';
@@ -223,7 +223,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               return null;
             },
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
@@ -237,7 +237,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 Navigator.pop(context);
               }
             },
-            child: Text('Submit'),
+            child: const Text('Submit'),
           ),
         ],
       ),
