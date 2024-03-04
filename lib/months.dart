@@ -1,3 +1,4 @@
+import 'package:expense_tracker/expense_list.dart';
 import 'package:flutter/material.dart';
 import 'db.dart';
 import 'package:intl/intl.dart';
@@ -59,10 +60,8 @@ class MonthList extends StatelessWidget {
                 child: Text('No data available.'),
               );
             }
-            const textStyle = TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold
-            );
+            const textStyle =
+                TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
             return ListView.builder(
               itemCount: totalExpensesByMonth.length,
               itemBuilder: (BuildContext context, int index) {
@@ -76,8 +75,18 @@ class MonthList extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: InkWell(
-                    onTap: () {
-                      // Add functionality here for what happens when you tap on a month
+                    onTap: () async {
+                      List<Expense> expenses =
+                          await DatabaseHelper.instance.getExpenses();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExpenseList(
+                            expenses: expenses,
+                            month: formattedMonth,
+                          ),
+                        ),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16),
