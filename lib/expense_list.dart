@@ -85,48 +85,51 @@ class ExpenseList extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: expenses.length,
-              itemBuilder: (context, index) {
-                final expense = expenses[index];
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(2.0),
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.grey[400]!,
-                        width: 1.0,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: ListView.builder(
+                itemCount: expenses.length,
+                itemBuilder: (context, index) {
+                  final expense = expenses[index];
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2.0),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey[400]!,
+                          width: 1.0,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          expense.title,
-                          style: dataTextStyle,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            expense.title,
+                            style: dataTextStyle,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 10.0),
-                      Expanded(
-                        child: Text(
-                          '${expense.amount}',
-                          style: dataTextStyle,
+                        const SizedBox(width: 10.0),
+                        Expanded(
+                          child: Text(
+                            '${expense.amount}',
+                            style: dataTextStyle,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 10.0),
-                      Expanded(
-                        child: Text(
-                          DateFormat('EEEE, d MMM').format(expense.date),
-                          style: dataTextStyle,
+                        const SizedBox(width: 10.0),
+                        Expanded(
+                          child: Text(
+                            DateFormat('EEEE, d MMM').format(expense.date),
+                            style: dataTextStyle,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],
