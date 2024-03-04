@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _showModal(BuildContext context) {
+  void _showModal(BuildContext context, {Expense? expense}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -77,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onExpenseAdded: () {
                     _fetchExpenses();
                   },
+                  expense: expense,
                 ),
               ],
             ),
@@ -232,6 +233,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   final expense = _expenses[index];
                   return InkWell(
                     onTap: () {
+                      _showModal(context, expense: expense);
+                    },
+                    onLongPress: () {
                       _deleteExpenseConfirmation(expense.id);
                     },
                     child: Container(
@@ -290,8 +294,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class ExpenseForm extends StatefulWidget {
   final Function? onExpenseAdded;
+  final Expense? expense;
 
-  const ExpenseForm({super.key, this.onExpenseAdded});
+  const ExpenseForm({super.key, this.onExpenseAdded, this.expense});
 
   @override
   _ExpenseFormState createState() => _ExpenseFormState();
@@ -312,6 +317,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
   @override
   Widget build(BuildContext context) {
+    _titleController.text = widget.expense?.title ?? '';
+    _amountController.text = widget.expense?.amount.toString() ?? '';
+
     return Form(
       key: _formKey,
       child: Column(
@@ -347,9 +355,12 @@ class _ExpenseFormState extends State<ExpenseForm> {
               if (_formKey.currentState!.validate()) {
                 String title = _titleController.text;
                 int amount = int.parse(_amountController.text);
-                DateTime date = DateTime.now(); // Use DateTime.now() directly
-                await _databaseHelper
-                    .insertExpense(Expense(title, amount, date));
+                DateTime date = widget.expense?.date ?? DateTime.now(); // Use existing or current date
+                if (widget.expense != null) {
+                  await _databaseHelper.updateExpense(Expense.row(widget.expense!.id, title, amount, date));
+                } else {
+                  await _databaseHelper.insertExpense(Expense(title, amount, date));
+                }
                 _titleController.clear();
                 _amountController.clear();
                 widget.onExpenseAdded!();

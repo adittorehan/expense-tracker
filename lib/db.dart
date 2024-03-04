@@ -108,4 +108,14 @@ class DatabaseHelper {
 
     return totalExpensesByMonth;
   }
+
+  Future<void> updateExpense(Expense expense) async {
+    final db = await instance.database;
+    await db.update(
+      'expenses',
+      expense.toMap(),
+      where: 'id = ?',
+      whereArgs: [expense.id],
+    );
+  }
 }
