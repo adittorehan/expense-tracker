@@ -92,4 +92,15 @@ class DatabaseHelper {
       whereArgs: [id],
     );
   }
+
+  Future<List<String>> getExpenseMonths() async {
+    final Database db = await database;
+    List<Map<String, dynamic>> months = await db.rawQuery(
+        "SELECT DISTINCT strftime('%Y-%m', date) AS month FROM expenses ORDER BY date DESC");
+    List<String> monthList = months.map((Map<String, dynamic> month) {
+      return month['month'] as String;
+    }).toList();
+
+    return monthList;
+  }
 }
