@@ -40,9 +40,10 @@ class MonthList extends StatelessWidget {
           ],
         ),
       ),
-      body: FutureBuilder<List<String>>(
-        future: DatabaseHelper.instance.getExpenseMonths(),
-        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+      body: FutureBuilder<Map<String, int>>(
+        future: DatabaseHelper.instance.getTotalExpenseByMonth(),
+        builder:
+            (BuildContext context, AsyncSnapshot<Map<String, int>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -52,33 +53,46 @@ class MonthList extends StatelessWidget {
               child: Text('Error: ${snapshot.error}'),
             );
           } else {
-            final List<String>? months = snapshot.data;
-            if (months == null || months.isEmpty) {
+            final Map<String, int>? totalExpensesByMonth = snapshot.data;
+            if (totalExpensesByMonth == null || totalExpensesByMonth.isEmpty) {
               return const Center(
                 child: Text('No data available.'),
               );
             }
+            const textStyle = TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold
+            );
             return ListView.builder(
-              itemCount: months.length,
+              itemCount: totalExpensesByMonth.length,
               itemBuilder: (BuildContext context, int index) {
-                final DateTime monthDate =
-                    DateFormat('yyyy-MM').parse(months[index]);
+                final String month = totalExpensesByMonth.keys.elementAt(index);
+                final int totalExpense = totalExpensesByMonth[month]!;
+                final DateTime monthDate = DateFormat('yyyy-MM').parse(month);
                 final String formattedMonth =
                     DateFormat('MMMM, yyyy').format(monthDate);
                 return Card(
                   elevation: 3,
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: InkWell(
                     onTap: () {
                       // Add functionality here for what happens when you tap on a month
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Center(
-                        child: Text(
-                          formattedMonth,
-                          style: const TextStyle(fontSize: 18),
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            formattedMonth,
+                            style: textStyle,
+                          ),
+                          Text(
+                            'Total: $totalExpense TK',
+                            style: textStyle,
+                          ),
+                        ],
                       ),
                     ),
                   ),

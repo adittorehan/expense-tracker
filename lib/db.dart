@@ -93,14 +93,19 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<String>> getExpenseMonths() async {
+  Future<Map<String, int>> getTotalExpenseByMonth() async {
     final Database db = await database;
-    List<Map<String, dynamic>> months = await db.rawQuery(
-        "SELECT DISTINCT strftime('%Y-%m', date) AS month FROM expenses ORDER BY date DESC");
-    List<String> monthList = months.map((Map<String, dynamic> month) {
-      return month['month'] as String;
-    }).toList();
 
-    return monthList;
+    List<Map<String, dynamic>> results = await db.rawQuery(
+        "SELECT strftime('%Y-%m', date) AS month, SUM(amount) AS total FROM expenses GROUP BY month ORDER BY date DESC");
+
+    Map<String, int> totalExpensesByMonth = {};
+    for (Map<String, dynamic> result in results) {
+      String month = result['month'] as String;
+      int totalExpense = (result['total'] ?? 0);
+      totalExpensesByMonth[month] = totalExpense;
+    }
+
+    return totalExpensesByMonth;
   }
 }
