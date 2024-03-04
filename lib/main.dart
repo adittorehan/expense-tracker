@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'db.dart';
+import 'months.dart';
 
 void main() {
   runApp(const MyApp());
@@ -125,6 +126,36 @@ class _MyHomePageState extends State<MyHomePage> {
           widget.title,
         ),
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.deepPurple,
+              ),
+              child: Text('Menu'),
+            ),
+            ListTile(
+              title: const Text('Expense List'),
+              onTap: () {
+                print('Clicked on expense list');
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Months'),
+              onTap: () {
+                print('Clicked on expense months');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MonthList()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           Container(
@@ -196,7 +227,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         TableCell(
                           child: InkWell(
                             onTap: () {
-                              _deleteExpenseConfirmation(expense.id); // Show delete confirmation dialog
+                              _deleteExpenseConfirmation(expense
+                                  .id); // Show delete confirmation dialog
                             },
                             child: Center(
                                 child: Text(DateFormat('EEEE, d MMM')
