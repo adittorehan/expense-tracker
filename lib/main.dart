@@ -91,19 +91,19 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Deletion'),
-          content: Text('Are you sure you want to delete this expense?'),
+          title: const Text('Confirm Deletion'),
+          content: const Text('Are you sure you want to delete this expense?'),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context), // Cancel deletion
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Close confirmation dialog
                 _deleteExpense(id!); // Proceed with deletion
               },
-              child: Text('Delete'),
+              child: const Text('Delete'),
             ),
           ],
         );
@@ -118,7 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    const headerTextStyle = TextStyle(fontWeight: FontWeight.bold);
+    const headerTextStyle =
+        TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
+    const dataTextStyle = TextStyle(fontSize: 16);
 
     return Scaffold(
       appBar: AppBar(
@@ -164,83 +166,113 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Text(
-                      'Total Expense: $_totalExpendedAmount',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
+                    const Expanded(
+                      child: Text(
+                        'Total Expense:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                        textAlign: TextAlign.left,
                       ),
-                      textAlign: TextAlign.left,
-                    )
+                    ),
+                    Expanded(
+                      child: Text(
+                        '$_totalExpendedAmount TK',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Table(
-                border: TableBorder.all(),
-                children: [
-                  const TableRow(
-                    children: [
-                      TableCell(
-                        child: Center(
-                            child: Text('Title', style: headerTextStyle)),
+          Container(
+            child: const Padding(
+              padding: EdgeInsets.only(left: 16, right: 16),
+              child: Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Title',
+                        style: headerTextStyle,
                       ),
-                      TableCell(
-                        child: Center(
-                            child: Text('Amount', style: headerTextStyle)),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Amount',
+                        style: headerTextStyle,
                       ),
-                      TableCell(
-                        child:
-                            Center(child: Text('Date', style: headerTextStyle)),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Date',
+                        style: headerTextStyle,
                       ),
-                    ],
-                  ),
-                  for (Expense expense in _expenses)
-                    TableRow(
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _expenses.length,
+              itemBuilder: (context, index) {
+                final expense = _expenses[index];
+                return InkWell(
+                  onTap: () {
+                    _deleteExpenseConfirmation(expense.id);
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2.0),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey[400]!,
+                          width: 1.0,
+                        ),
+                      ),
+                    ),
+                    child: Row(
                       children: [
-                        TableCell(
-                          child: InkWell(
-                            onTap: () {
-                              _deleteExpenseConfirmation(expense
-                                  .id); // Show delete confirmation dialog
-                            },
-                            child: Center(child: Text(expense.title)),
+                        Expanded(
+                          child: Text(
+                            expense.title,
+                            style: dataTextStyle,
                           ),
                         ),
-                        TableCell(
-                          child: InkWell(
-                            onTap: () {
-                              _deleteExpenseConfirmation(expense
-                                  .id); // Show delete confirmation dialog
-                            },
-                            child: Center(child: Text('${expense.amount}')),
+                        const SizedBox(width: 10.0),
+                        Expanded(
+                          child: Text(
+                            '${expense.amount}',
+                            style: dataTextStyle,
                           ),
                         ),
-                        TableCell(
-                          child: InkWell(
-                            onTap: () {
-                              _deleteExpenseConfirmation(expense
-                                  .id); // Show delete confirmation dialog
-                            },
-                            child: Center(
-                                child: Text(DateFormat('EEEE, d MMM')
-                                    .format(expense.date))),
+                        const SizedBox(width: 10.0),
+                        Expanded(
+                          child: Text(
+                            DateFormat('EEEE, d MMM').format(expense.date),
+                            style: dataTextStyle,
                           ),
                         ),
                       ],
                     ),
-                ],
-              ),
+                  ),
+                );
+              },
             ),
-          )
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

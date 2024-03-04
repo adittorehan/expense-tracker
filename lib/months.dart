@@ -44,7 +44,7 @@ class MonthList extends StatelessWidget {
         future: DatabaseHelper.instance.getExpenseMonths(),
         builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasError) {
@@ -54,7 +54,7 @@ class MonthList extends StatelessWidget {
           } else {
             final List<String>? months = snapshot.data;
             if (months == null || months.isEmpty) {
-              return Center(
+              return const Center(
                 child: Text('No data available.'),
               );
             }
@@ -67,17 +67,17 @@ class MonthList extends StatelessWidget {
                     DateFormat('MMMM, yyyy').format(monthDate);
                 return Card(
                   elevation: 3,
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: InkWell(
                     onTap: () {
                       // Add functionality here for what happens when you tap on a month
                     },
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: Center(
                         child: Text(
                           formattedMonth,
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
                     ),
